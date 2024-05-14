@@ -26,7 +26,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.fjr619.tutorialcomposeswipeaction.swipe_action.DraggableItem
-import com.fjr619.tutorialcomposeswipeaction.swipe_action.SwipeAction
+import com.fjr619.tutorialcomposeswipeaction.swipe_action.SwipeActionContainer
+import com.fjr619.tutorialcomposeswipeaction.swipe_action.rememberSwipeActionState
 import com.fjr619.tutorialcomposeswipeaction.ui.theme.TutorialComposeSwipeActionTheme
 
 class MainActivity : ComponentActivity() {
@@ -58,38 +59,41 @@ class MainActivity : ComponentActivity() {
                             items = programmingLanguages,
                             key = { it }
                         ) { data ->
-                            SwipeAction(
+                            SwipeActionContainer(
                                 modifier = Modifier.animateItemPlacement(),
                                 parentHeight = size.height,
-                                listStartAction = mutableListOf(
-                                    DraggableItem(
-                                        containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.SaveAction,
-                                        icon = Icons.Filled.Star,
-                                        text = "Save",
-                                        onClick = {
-                                            println("ini save")
-                                        }
-                                    )
-                                ),
-                                listEndAction = mutableListOf(
-                                    DraggableItem(
-                                        containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.EditAction,
-                                        icon = Icons.Filled.Edit,
-                                        text = "Edit",
-                                        onClick = {
-                                            println("ini edit")
-                                        }
+                                state = rememberSwipeActionState(
+                                    listStartAction = mutableListOf(
+                                        DraggableItem(
+                                            containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.SaveAction,
+                                            icon = Icons.Filled.Star,
+                                            text = "Save",
+                                            onClick = {
+                                                println("ini save")
+                                            }
+                                        )
                                     ),
-                                    DraggableItem(
-                                        containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.DeleteAction,
-                                        icon = Icons.Filled.Delete,
-                                        closeOnBackgroundClick = false,
-                                        text = "Delete",
-                                        onClick = {
-                                            programmingLanguages.remove(data)
-                                        }
+                                    listEndAction = mutableListOf(
+                                        DraggableItem(
+                                            containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.EditAction,
+                                            icon = Icons.Filled.Edit,
+                                            text = "Edit",
+                                            onClick = {
+                                                println("ini edit")
+                                            }
+                                        ),
+                                        DraggableItem(
+                                            containerColor = com.fjr619.tutorialcomposeswipeaction.ui.theme.DeleteAction,
+                                            icon = Icons.Filled.Delete,
+                                            closeOnBackgroundClick = false,
+                                            text = "Delete",
+                                            onClick = {
+                                                programmingLanguages.remove(data)
+                                            }
+                                        )
                                     )
                                 ),
+
                                 content = {
                                     ListItem(
                                         modifier = Modifier
