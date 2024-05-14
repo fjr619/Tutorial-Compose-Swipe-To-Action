@@ -53,9 +53,9 @@ data class SwipeActionState(
     val anchoredDraggableState = AnchoredDraggableState(
         initialValue = DragAnchors.Center,
         anchors = DraggableAnchors {
-            DragAnchors.Start at -actionSizePx
+            if (listStartAction.isNotEmpty()) DragAnchors.Start at -actionSizePx
             DragAnchors.Center at 0f
-            DragAnchors.End at endActionSizePx
+            if (listEndAction.isNotEmpty()) DragAnchors.End at endActionSizePx
         },
         positionalThreshold = { distance: Float -> distance * 0.5f },
         velocityThreshold = { with(density) { 100.dp.toPx() } },
