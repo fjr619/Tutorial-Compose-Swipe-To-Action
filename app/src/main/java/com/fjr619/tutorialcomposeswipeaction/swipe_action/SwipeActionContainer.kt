@@ -1,6 +1,9 @@
 package com.fjr619.tutorialcomposeswipeaction.swipe_action
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,11 +32,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-
-
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -43,6 +43,7 @@ fun LazyItemScope.SwipeActionContainer(
     content: @Composable BoxScope.() -> Unit,
     state: SwipeActionState = rememberSwipeActionState()
 ) {
+
     Box(
         modifier = Modifier
             .clip(RectangleShape)
@@ -84,6 +85,7 @@ fun LazyItemScope.SwipeActionContainer(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BoxScope.ActionItem(
     modifier: Modifier = Modifier,
@@ -92,6 +94,10 @@ fun BoxScope.ActionItem(
     anchor: DragAnchors
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val alphaEasing: Easing = CubicBezierEasing(0.4f, 0.4f, 0.17f, 0.9f)
+    val maxRevealPx = state.maxRevealPx(anchor)
+    val draggedRatio = (state.anchoredDraggableState.offset.absoluteValue / maxRevealPx.absoluteValue).coerceIn(0f, 1f)
+    val alpha = alphaEasing.transform(draggedRatio)
 
     Row(
         modifier = Modifier
@@ -105,11 +111,15 @@ fun BoxScope.ActionItem(
             )
     ) {
         state.listAction(anchor).forEach { item ->
+            val animatedContainerColor = if(alpha in 0f..1f ) item.containerColor.copy(
+                alpha = alpha
+            ) else item.containerColor
+
             Column(
                 modifier = modifier
                     .width(state.defaultActionSize)
                     .fillMaxHeight()
-                    .background(item.containerColor)
+                    .background(animatedContainerColor)
                     .clickable {
                         if (item.closeOnBackgroundClick) {
                             coroutineScope.launch {
@@ -130,11 +140,13 @@ fun BoxScope.ActionItem(
                     tint = item.iconColor
                 )
 
-                Text(
-                    text = item.text,
-                    color = item.textColor,
-                    fontSize = item.textSize,
-                )
+                AnimatedVisibility(visible = item.showText) {
+                    Text(
+                        text = item.text,
+                        color = item.textColor,
+                        fontSize = item.textSize,
+                    )
+                }
             }
         }
     }

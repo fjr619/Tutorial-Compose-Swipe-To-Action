@@ -45,6 +45,11 @@ data class SwipeActionState(
     private val actionSizePx = with(density) { (defaultActionSize * listStartAction.size).toPx() }
     private val endActionSizePx = with(density) { (defaultActionSize * listEndAction.size).toPx() }
 
+    val maxRevealPx : (DragAnchors) -> Float = {
+        if (it == DragAnchors.Start) actionSizePx
+        else endActionSizePx
+    }
+
     val anchoredDraggableState = AnchoredDraggableState(
         initialValue = DragAnchors.Center,
         anchors = DraggableAnchors {

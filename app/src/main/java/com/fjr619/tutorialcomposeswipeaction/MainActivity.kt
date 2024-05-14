@@ -87,6 +87,7 @@ class MainActivity : ComponentActivity() {
                                             icon = Icons.Filled.Delete,
                                             closeOnBackgroundClick = false,
                                             text = "Delete",
+                                            showText = false,
                                             onClick = {
                                                 programmingLanguages.remove(data)
                                             }
